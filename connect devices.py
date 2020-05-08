@@ -22,15 +22,15 @@ def connectDevices():
         if line==None or len(line)<=0 or line.startswith("List"):
             continue
         
-        matchObj=re.match(r'(\w+)\s*device\s*(usb).+model:(\S*)',line)
+        matchObj=re.match(r'(\w+)\s*device\s*.+model:(\S*)',line)
         if matchObj==None:
             continue
 
-        if len(matchObj.groups())<3:
+        if len(matchObj.groups())<2:
             continue
 
         deviceId=matchObj[1]
-        deviceModel=matchObj[3]
+        deviceModel=matchObj[2]
         ret=subprocess.run(["adb","-s",deviceId,"shell","ip","-f","inet","addr","show","wlan0"],stdout=subprocess.PIPE,encoding="utf-8",timeout=8)
         ipinfos=ret.stdout.split('\n')
         if ipinfos==None or len(ipinfos)<1:
