@@ -42,7 +42,7 @@ def connectDevices():
             continue
 
         ipAddress=matchObjIp.group()
-        tcpPort=random.randint(1000,9999) 
+        tcpPort=random.randint(5555,9999) 
         os.system("adb -s %s tcpip %s"%(deviceId,tcpPort))
         os.system("adb -s %s connect %s:%s"%(deviceId,ipAddress,tcpPort))
         print("connected to device ",ipAddress,tcpPort,deviceModel)
