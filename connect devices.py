@@ -7,6 +7,7 @@ import subprocess
 import re
 import random
 
+
 def printDoc():
     print("---------------------Aslan（122560007@163.com）-------------------")
     print("1.Please set adb system environment variable first.")
@@ -15,40 +16,43 @@ def printDoc():
     print("4.Please connect same WI-FI as the pc.")
     print("---------------------Aslan（122560007@163.com）-------------------")
 
+
 def connectDevices():
-    ret=subprocess.run(["adb", "devices","-l"],stdout=subprocess.PIPE,encoding="utf-8",timeout=8)
-    lines=ret.stdout.split('\n')
+    ret = subprocess.run(["adb", "devices", "-l"],
+                         stdout=subprocess.PIPE, encoding="utf-8", timeout=8)
+    lines = ret.stdout.split('\n')
     for line in lines:
-        if line==None or len(line)<=0 or line.startswith("List"):
-            continue
-        
-        matchObj=re.match(r'(\w+)\s*device\s*.+model:(\S*)',line)
-        if matchObj==None:
+        if line == None or len(line) <= 0 or line.startswith("List"):
             continue
 
-        if len(matchObj.groups())<2:
+        matchObj = re.match(r'(\w+)\s*device\s*.+model:(\S*)', line)
+        if matchObj == None:
             continue
 
-        deviceId=matchObj[1]
-        deviceModel=matchObj[2]
-        ret=subprocess.run(["adb","-s",deviceId,"shell","ip","-f","inet","addr","show","wlan0"],stdout=subprocess.PIPE,encoding="utf-8",timeout=8)
-        ipinfos=ret.stdout.split('\n')
-        if ipinfos==None or len(ipinfos)<1:
+        if len(matchObj.groups()) < 2:
             continue
 
-        ipinfo=ipinfos[1]
-        matchObjIp=re.search(r'(\d+\.?){4}',ipinfo)
-        if matchObjIp==None:
+        deviceId = matchObj[1]
+        deviceModel = matchObj[2]
+        ret = subprocess.run(["adb", "-s", deviceId, "shell", "ip", "-f", "inet", "addr",
+                              "show", "wlan0"], stdout=subprocess.PIPE, encoding="utf-8", timeout=8)
+        ipinfos = ret.stdout.split('\n')
+        if ipinfos == None or len(ipinfos) < 1:
             continue
 
-        ipAddress=matchObjIp.group()
-        tcpPort=random.randint(5555,9999) 
-        os.system("adb -s %s tcpip %s"%(deviceId,tcpPort))
-        os.system("adb -s %s connect %s:%s"%(deviceId,ipAddress,tcpPort))
-        print("connected to device ",ipAddress,tcpPort,deviceModel)
+        ipinfo = ipinfos[1]
+        matchObjIp = re.search(r'(\d+\.?){4}', ipinfo)
+        if matchObjIp == None:
+            continue
+
+        ipAddress = matchObjIp.group()
+        tcpPort = 5555
+        os.system("adb -s %s tcpip %s" % (deviceId, tcpPort))
+        os.system("adb -s %s connect %s:%s" % (deviceId, ipAddress, tcpPort))
+
 
 printDoc()
-key=input("Press any to continue...")
+key = input("Press any to continue...")
 connectDevices()
 
 time.sleep(5)
